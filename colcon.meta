@@ -1,0 +1,56 @@
+{
+  "names": {
+    "drone_controller": {
+      "cmake-args": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_FLAGS=-O3 -march=native"
+      ],
+      "dependencies": [
+        "rclpy",
+        "geometry_msgs",
+        "sensor_msgs",
+        "nav_msgs",
+        "std_msgs",
+        "tf2_ros",
+        "tf2_geometry_msgs"
+      ]
+    },
+    "remote_interface": {
+      "cmake-args": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "dependencies": [
+        "rclpy",
+        "geometry_msgs",
+        "sensor_msgs",
+        "nav_msgs",
+        "std_msgs",
+        "tf2_ros",
+        "tf2_geometry_msgs"
+      ]
+    },
+    "network_simulator": {
+      "cmake-args": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "dependencies": [
+        "rclpy",
+        "std_msgs"
+      ]
+    },
+    "drone_simulator": {
+      "cmake-args": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "dependencies": [
+        "rclpy",
+        "geometry_msgs",
+        "sensor_msgs",
+        "nav_msgs",
+        "std_msgs",
+        "tf2_ros"
+      ]
+    }
+  },
+  "version": 1
+} 

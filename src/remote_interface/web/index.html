@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Remoto de Dron - ROS 2 + 5G</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-drone"></i> Control Remoto de Dron</h1>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span class="status-text" id="statusText">Desconectado</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Panel de Control -->
+            <div class="control-panel">
+                <h2><i class="fas fa-gamepad"></i> Controles</h2>
+                
+                <!-- Joystick Virtual -->
+                <div class="joystick-container">
+                    <div class="joystick-area">
+                        <div class="joystick" id="joystick">
+                            <div class="joystick-knob" id="joystickKnob"></div>
+                        </div>
+                        <div class="joystick-labels">
+                            <span class="label forward">Adelante</span>
+                            <span class="label backward">Atrás</span>
+                            <span class="label left">Izquierda</span>
+                            <span class="label right">Derecha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles de Altura y Rotación -->
+                <div class="vertical-controls">
+                    <div class="control-group">
+                        <label for="altitudeControl">Altura</label>
+                        <input type="range" id="altitudeControl" min="-1" max="1" step="0.1" value="0">
+                        <span class="control-value" id="altitudeValue">0.0</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="yawControl">Rotación</label>
+                        <input type="range" id="yawControl" min="-1" max="1" step="0.1" value="0">
+                        <span class="control-value" id="yawValue">0.0</span>
+                    </div>
+                </div>
+
+                <!-- Botones de Control -->
+                <div class="control-buttons">
+                    <button class="btn btn-primary" id="armButton">
+                        <i class="fas fa-power-off"></i> Armar Dron
+                    </button>
+                    <button class="btn btn-secondary" id="emergencyButton">
+                        <i class="fas fa-exclamation-triangle"></i> Emergencia
+                    </button>
+                    <button class="btn btn-info" id="takeoffButton">
+                        <i class="fas fa-arrow-up"></i> Despegar
+                    </button>
+                    <button class="btn btn-warning" id="landButton">
+                        <i class="fas fa-arrow-down"></i> Aterrizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel de Telemetría -->
+            <div class="telemetry-panel">
+                <h2><i class="fas fa-chart-line"></i> Telemetría</h2>
+                
+                <div class="telemetry-grid">
+                    <!-- Posición -->
+                    <div class="telemetry-card">
+                        <h3><i class="fas fa-map-marker-alt"></i> Posición</h3>
+                        <div class="telemetry-values">
+                            <div class="value-item">
+                                <span class="label">X:</span>
+                                <span class="value" id="posX">0.00</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="label">Y:</span>
+                                <span class="value" id="posY">0.00</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="label">Z:</span>
+                                <span class="value" id="posZ">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Velocidad -->
+                    <div class="telemetry-card">
+                        <h3><i class="fas fa-tachometer-alt"></i> Velocidad</h3>
+                        <div class="telemetry-values">
+                            <div class="value-item">
+                                <span class="label">VX:</span>
+                                <span class="value" id="velX">0.00</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="label">VY:</span>
+                                <span class="value" id="velY">0.00</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="label">VZ:</span>
+                                <span class="value" id="velZ">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Batería -->
+                    <div class="telemetry-card">
+                        <h3><i class="fas fa-battery-three-quarters"></i> Batería</h3>
+                        <div class="battery-indicator">
+                            <div class="battery-bar">
+                                <div class="battery-level" id="batteryLevel"></div>
+                            </div>
+                            <span class="battery-percentage" id="batteryPercentage">100%</span>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="telemetry-card">
+                        <h3><i class="fas fa-info-circle"></i> Estado</h3>
+                        <div class="status-indicators">
+                            <div class="status-item">
+                                <span class="status-label">Armado:</span>
+                                <span class="status-value" id="armedStatus">No</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Modo:</span>
+                                <span class="status-value" id="flightMode">MANUAL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Latencia -->
+                <div class="latency-chart">
+                    <h3><i class="fas fa-clock"></i> Latencia de Red</h3>
+                    <canvas id="latencyCanvas" width="300" height="100"></canvas>
+                    <div class="latency-info">
+                        <span>Promedio: <span id="avgLatency">0</span>ms</span>
+                        <span>Máxima: <span id="maxLatency">0</span>ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Teleoperación de Dron con ROS 2 y 5G</p>
+            <p>Desarrollado para aprendizaje de programación de drones</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="joystick.js"></script>
+    <script src="websocket.js"></script>
+    <script src="telemetry.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 

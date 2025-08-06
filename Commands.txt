@@ -1,0 +1,11 @@
+# Ver todos los topics
+ros2 topic list
+
+# Ver la telemetría del dron
+ros2 topic echo /drone/telemetry
+
+# Ver el estado de la batería
+ros2 topic echo /drone/battery
+
+# Enviar comandos manualmente
+ros2 topic pub /drone/control geometry_msgs/msg/Twist "{linear: {x: 1.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
