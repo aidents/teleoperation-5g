@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Script de instalación de dependencias para Teleoperación de Dron con ROS 2 y 5G
-# Autor: Tu Nombre
-# Fecha: 2024
+# Autor: Gabriel Villegas
+# Fecha: 2025-08-07
 
 set -e  # Salir en caso de error
 
@@ -13,7 +13,7 @@ echo "================================================================"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+BLUE='\033[0;34m'11111111111111111111
 NC='\033[0m' # No Color
 
 # Función para imprimir mensajes
