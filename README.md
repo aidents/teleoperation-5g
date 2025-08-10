@@ -6,17 +6,32 @@ Este proyecto implementa un sistema de teleoperación de dron usando ROS 2 con s
 
 **¿Solo quieres ver el sistema funcionando?**
 
-1. **Windows**: Ejecuta `start_web_server.bat` → Se abre la interfaz web
-2. **WSL**: Ejecuta `./start_ros_system.sh` → Inicia el sistema ROS 2  
-3. **Listo**: ¡Ya puedes controlar el dron desde http://localhost:8080!
+### **Opción 1: Solo Interfaz Web (Windows)**
+
+1. **Windows**: Ejecuta `start_web.bat` → Se abre la interfaz web moderna
+2. **Listo**: ¡Ya puedes ver la interfaz en http://localhost:3000!
+
+### **Opción 2: Sistema Completo (RECOMENDADO)**
+
+1. **Windows**: Ejecuta `start_system.bat` → Inicia el sistema ROS 2 completo en WSL
+2. **WSL**: Ejecuta `./start_ros_system.sh` → Inicia el sistema ROS 2 completo
+3. **Listo**: ¡Ya puedes controlar el dron desde http://localhost:3000!
+
+### **Opción 3: Componentes Individuales**
+
+1. **Windows**: `start_web.bat` → Solo interfaz web
+2. **WSL**: `./start_ros_system.sh` → Solo sistema ROS 2
+3. **Manual**: `python start_web.py` → Interfaz web manual
 
 ## 🚁 Características
 
-- **Control remoto de dron**: Interfaz web para controlar el dron desde cualquier dispositivo
+- **Control remoto de dron**: Interfaz web moderna con Next.js para controlar el dron desde cualquier dispositivo
 - **Simulación de red 5G**: Configuración de QoS para simular latencia y ancho de banda de red 5G
 - **ROS 2 Topics y Servicios**: Comunicación robusta entre componentes
 - **Interfaz web responsive**: Control intuitivo con joystick virtual y botones
 - **Monitoreo en tiempo real**: Visualización de telemetría del dron
+- **Arquitectura moderna**: Next.js 15 + TypeScript + Tailwind CSS
+- **Bridge ROS2-Web**: Comunicación en tiempo real entre ROS2 y la interfaz web
 
 ## 📁 Estructura del Proyecto
 
@@ -24,7 +39,8 @@ Este proyecto implementa un sistema de teleoperación de dron usando ROS 2 con s
 drone_teleop_5g/
 ├── src/
 │   ├── drone_controller/          # Controlador del dron
-│   ├── remote_interface/          # Interfaz web remota
+│   ├── remote_interface/          # Interfaz web remota moderna
+│   │   └── web/                   # Aplicación Next.js + TypeScript
 │   ├── network_simulator/         # Simulador de red 5G
 │   └── drone_simulator/           # Simulador del dron
 ├── config/                        # Configuraciones QoS y red
@@ -36,6 +52,7 @@ drone_teleop_5g/
 ## 🛠️ Requisitos
 
 - **ROS 2 Rolling** (instalado en WSL Ubuntu)
+- **Node.js 18+** (para la interfaz web moderna)
 - **Python 3.8+** (tanto en Windows como en WSL)
 - **WSL 2** con Ubuntu 
 - **Navegador web moderno**
@@ -60,37 +77,75 @@ source install/setup.bash
 
 ## 🎮 Uso Rápido
 
-### **PASO 1: Iniciar Interfaz Web (Windows)**
+### **PASO 1: Iniciar Interfaz Web Moderna (Windows)**
 
-**Opción A - Script Automático (RECOMENDADO):**
+**Opción A - Script Simple (RECOMENDADO):**
 ```cmd
 # Doble clic en el archivo o ejecutar desde CMD:
-start_web_server.bat
+start_web.bat
 ```
 
-**Opción B - Manual:**
-En **PowerShell o CMD** desde el directorio del proyecto:
+**Opción B - Script Python (Alternativa):**
+```cmd
+# Ejecutar desde CMD:
+python start_web.py
+```
 
-```powershell
+**Opción C - Desde Git Bash:**
+```bash
+# Si estás usando Git Bash:
+./start_web_gitbash.sh
+```
+
+**Opción D - Manual:**
+```cmd
+cd "src\remote_interface\web"
+npm install --legacy-peer-deps
+npm run dev
+```
+
+**Opción E - Manual desde Git Bash:**
+```bash
 # Navegar al directorio web
-cd "install\remote_interface\share\remote_interface\web"
+cd "src/remote_interface/web"
 
-# Iniciar servidor HTTP
-python -m http.server 8080
+# Instalar dependencias (solo la primera vez)
+npm install --legacy-peer-deps
+
+# Iniciar servidor de desarrollo
+npm run dev
 ```
 
-**Resultado:** Se abrirá automáticamente **http://localhost:8080**
+**Resultado:** Se abrirá automáticamente **http://localhost:3000**
 
 ### **PASO 2: Iniciar Sistema ROS 2 (WSL)**
 
 **Opción A - Script Automático (RECOMENDADO):**
+```cmd
+# Doble clic en el archivo o ejecutar desde CMD:
+start_system.bat
+```
+
+**Opción B - Script Python (Alternativa):**
+```cmd
+# Ejecutar desde CMD:
+python start_system.py
+```
+
+**Opción C - Desde Git Bash:**
+```bash
+# Si estás usando Git Bash:
+./start_system_gitbash.sh
+```
+
+**Opción D - Script Bash Directo en WSL:**
 ```bash
 # En terminal WSL Ubuntu
 cd "/mnt/d/Documentos/Programacion/ROS 2/Teleoperacion con dron"
 ./start_ros_system.sh
 ```
 
-**Opción B - Manual:**
+**Opción E - Manual en WSL:**
 ```bash
 # Configurar entorno
 cd "/mnt/d/Documentos/Programacion/ROS 2/Teleoperacion con dron"
@@ -99,113 +154,173 @@ source install/setup.bash
 
 # Iniciar controlador del dron
 ros2 run drone_controller drone_controller
+
+# En otra terminal, iniciar bridge ROS2-Web
+ros2 run remote_interface ros2_web_bridge
 ```
 
-### **PASO 3: Controlar el Dron**
+## 🔌 Integración ROS2-Web
 
-**Desde la interfaz web:**
-- Usar joystick virtual para controlar el dron
-- Botones de armado/desarmado
-- Monitoreo de telemetría en tiempo real
+El sistema ahora incluye un **bridge ROS2-Web** que permite:
 
-**Desde terminal (WSL):**
+- **Comunicación en tiempo real** entre ROS2 y la interfaz web
+- **Telemetría en vivo** del dron (posición, velocidad, batería)
+- **Control remoto** desde la interfaz web hacia ROS2
+- **Monitoreo de latencia** de la red 5G simulada
+- **Estado del sistema** sincronizado entre componentes
+
+### **Flujo de Datos:**
+```
+[Interfaz Web] ←→ [Bridge ROS2-Web] ←→ [Sistema ROS2]
+    3000             8080                    ROS2 Topics
+```
+
+## 🌐 Interfaz Web Moderna
+
+La nueva interfaz web utiliza tecnologías modernas:
+
+- **Next.js 15** - Framework de React para aplicaciones web
+- **TypeScript** - Tipado estático para código robusto
+- **Tailwind CSS** - Framework de CSS utilitario
+- **Radix UI** - Componentes de interfaz accesibles
+- **React 19** - Última versión de React
+
+### **Características de la Interfaz:**
+- 🎨 **Diseño Moderno** y profesional
+- 📱 **Completamente Responsive** para todos los dispositivos
+- 🧩 **Arquitectura Modular** y escalable
+- 🔒 **TypeScript** para mayor robustez
+- ⚡ **Rendimiento optimizado** con Next.js
+- 🔌 **Integración ROS2** en tiempo real
+
+## 🔧 Comandos Útiles
+
+### **Scripts de Inicio (Windows):**
+```cmd
+# Solo interfaz web
+start_web.bat
+
+# Sistema ROS 2 completo en WSL
+start_system.bat
+```
+
+### **Scripts de Inicio (Git Bash):**
 ```bash
+# Solo interfaz web
+./start_web_gitbash.sh
+
+# Sistema ROS 2 completo en WSL
+./start_system_gitbash.sh
+```
+
+### **Scripts de Inicio (WSL/Linux):**
+```bash
+# Sistema ROS 2 completo
+./start_ros_system.sh
+```
+
+### **Interfaz Web:**
+```bash
+# Desarrollo
+npm run dev
+
+# Construir para producción
+npm run build
+
+# Servidor de producción
+npm run start
+
+# Verificar código
+npm run lint
+```
+
+### **Sistema ROS 2:**
+```bash
+# Ver nodos activos
+ros2 node list
+
+# Ver topics
+ros2 topic list
+
+# Ver telemetría del dron
+ros2 topic echo /drone/telemetry
+
 # Armar el dron
 ros2 topic pub --once /drone/arm std_msgs/Bool "{data: true}"
 
-# Controlar movimiento
-ros2 topic pub --once /drone/control geometry_msgs/Twist "{linear: {x: 1.0, y: 0.0, z: 0.0}}"
-
-# Ver telemetría
-ros2 topic echo /drone/telemetry
+# Ver bridge ROS2-Web
+ros2 node info /ros2_web_bridge
 ```
 
-## 📊 QoS y Configuración 5G
+## 📊 Monitoreo y Control
 
-El proyecto incluye configuraciones QoS optimizadas para:
-- **Baja latencia**: < 10ms para control crítico
-- **Alta confiabilidad**: Mensajes garantizados
-- **Ancho de banda eficiente**: Compresión de datos
+### **Telemetría en Tiempo Real:**
+- **Posición**: X, Y, Z en metros
+- **Velocidad**: VX, VY, VZ en m/s
+- **Orientación**: Roll, Pitch, Yaw en grados
+- **Estado**: Armado/Desarmado, Modo de vuelo
+- **Batería**: Nivel de carga en porcentaje
+- **Latencia de red**: Tiempo de respuesta de la red 5G
 
-## 🔧 Métodos Alternativos
+### **Controles Disponibles:**
+- **Joystick virtual**: Control de movimiento horizontal (adelante/atrás, izquierda/derecha)
+- **Slider de altura**: Control de movimiento vertical
+- **Slider de rotación**: Control de giro (yaw)
+- **Botones de control**: Armar/Desarmar, Despegar/Aterrizar
+- **Botón de emergencia**: Parada de emergencia
 
-### **Método A: Sistema Completo con Launch Files**
+## 🚨 Solución de Problemas
 
-```bash
-# En WSL - Sistema completo automático
-ros2 launch launch/full_system.launch.py
-```
+### **Interfaz Web no se abre:**
+1. Verifica que Node.js esté instalado
+2. Asegúrate de usar `--legacy-peer-deps` al instalar
+3. Verifica que el puerto 3000 esté disponible
+4. Revisa la consola del navegador para errores
 
-### **Método B: Componentes Individuales**
+### **Sistema ROS 2 no responde:**
+1. Verifica que WSL esté ejecutándose
+2. Confirma que ROS 2 esté instalado
+3. Verifica que el workspace esté compilado
+4. Revisa los logs de error
 
-**Terminal 1 (WSL) - Controlador:**
-```bash
-ros2 run drone_controller drone_controller
-```
+### **Bridge ROS2-Web no conecta:**
+1. Verifica que el puerto 8080 esté disponible
+2. Confirma que el nodo `ros2_web_bridge` esté ejecutándose
+3. Revisa los logs de ROS2 para errores
+4. Verifica que la interfaz web esté en puerto 3000
 
-**Terminal 2 (WSL) - Simulador de Red:**
-```bash
-ros2 run network_simulator network_simulator
-```
+### **No hay comunicación en tiempo real:**
+1. Verifica que ambos componentes estén ejecutándose
+2. Confirma que el WebSocket esté conectado (consola del navegador)
+3. Verifica que los topics ROS2 estén publicando datos
+4. Revisa la configuración de QoS en el bridge
 
-**Terminal 3 (WSL) - Servidor WebSocket:**
-```bash
-ros2 run remote_interface web_server
-```
+## 📚 Documentación Adicional
 
-### **Método C: Acceso Directo a Archivos**
+- **README_NEXTJS_INTERFACE.md** - Documentación completa de la interfaz web
+- **docs/** - Documentación técnica del proyecto
+- **launch/** - Archivos de configuración de lanzamiento
 
-Si hay problemas de conectividad:
-1. Abre directamente: `install\remote_interface\share\remote_interface\web\index.html`
-2. O usa: `demo_interface.html` para una versión offline
+## 🤝 Contribuir
 
-## 🛠️ Solución de Problemas
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-### **No se conecta la interfaz web:**
-```powershell
-# Windows - Verificar puerto
-netstat -an | findstr 8080
+## 📄 Licencia
 
-# Usar servidor alternativo
-python -m http.server 8080 --bind 0.0.0.0
-```
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
-### **Error "conexión rechazada":**
-```bash
-# WSL - Verificar nodos ROS
-ros2 node list
+## 📞 Soporte
 
-# Reiniciar servicios
-pkill -f "ros2\|drone\|web"
-ros2 run drone_controller drone_controller
-```
+Si tienes problemas o preguntas:
+1. Revisa la documentación en `docs/`
+2. Verifica los logs de error
+3. Abre un issue en el repositorio
+4. Contacta al equipo de desarrollo
 
-### **WSL no conecta con Windows:**
-```powershell
-# PowerShell como Administrador
-netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=172.30.159.225
-```
+---
 
-## 📊 Comandos Útiles
-
-```bash
-# Ver estado del sistema
-ros2 node list
-ros2 topic list | grep drone
-
-# Verificar telemetría
-ros2 topic hz /drone/telemetry
-ros2 topic echo /drone/telemetry --once
-
-# Control manual
-ros2 topic pub --once /drone/arm std_msgs/Bool "{data: true}"
-ros2 topic pub /drone/control geometry_msgs/Twist "{linear: {x: 1.0}}" --rate 10
-```
-
-## 📝 Licencia
-
-MIT License - ver LICENSE para detalles.
-
-## 🤝 Contribuciones
-
-¡Las contribuciones son bienvenidas! Por favor lee CONTRIBUTING.md antes de enviar un PR. 
+**¡Disfruta controlando tu dron con la nueva interfaz moderna integrada con ROS2!** 🚁✨ 

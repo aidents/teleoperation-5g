@@ -42,10 +42,47 @@ if [ $EXISTING_NODES -gt 0 ]; then
     fi
 fi
 
-echo -e "${BLUE}🚁 Iniciando Controlador del Dron...${NC}"
+echo -e "${BLUE}🚁 Iniciando Sistema Completo...${NC}"
 echo -e "${YELLOW}📊 El controlador publicará telemetría en /drone/telemetry${NC}"
+echo -e "${YELLOW}🌐 El bridge ROS2-Web estará disponible en ws://localhost:8080${NC}"
 echo -e "${YELLOW}🎮 Para armar el dron: ros2 topic pub --once /drone/arm std_msgs/Bool \"{data: true}\"${NC}"
 echo
 
-# Iniciar controlador del dron
-ros2 run drone_controller drone_controller
+# Función para limpiar procesos al salir
+cleanup() {
+    echo -e "\n${YELLOW}🛑 Deteniendo procesos...${NC}"
+    pkill -f "ros2 run drone_controller" 2>/dev/null || true
+    pkill -f "ros2 run remote_interface" 2>/dev/null || true
+    echo -e "${GREEN}✅ Procesos detenidos${NC}"
+    exit 0
+}
+
+# Configurar trap para cierre limpio
+trap cleanup SIGINT SIGTERM
+
+echo -e "${BLUE}🎮 Iniciando Controlador del Dron...${NC}"
+# Iniciar controlador del dron en background
+ros2 run drone_controller drone_controller &
+DRONE_PID=$!
+
+echo -e "${BLUE}🌐 Iniciando Bridge ROS2-Web...${NC}"
+# Iniciar bridge ROS2-Web en background
+ros2 run remote_interface ros2_web_bridge &
+BRIDGE_PID=$!
+
+echo -e "${GREEN}✅ Sistema iniciado correctamente!${NC}"
+echo -e "${BLUE}📱 Interfaz web: http://localhost:3000${NC}"
+echo -e "${BLUE}🔌 Bridge WebSocket: ws://localhost:8080${NC}"
+echo -e "${BLUE}🎮 Controlador: Activo${NC}"
+echo
+echo -e "${YELLOW}💡 Para detener: Ctrl+C${NC}"
+echo -e "${YELLOW}📊 Monitoreando nodos activos...${NC}"
+echo "==============================================="
+
+# Monitorear nodos activos
+while true; do
+    sleep 5
+    echo -e "${BLUE}🔄 Nodos activos:${NC}"
+    ros2 node list 2>/dev/null || echo "No hay nodos activos"
+    echo "---"
+done
