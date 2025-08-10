@@ -94,7 +94,7 @@ python start_web.py
 **Opción C - Desde Git Bash:**
 ```bash
 # Si estás usando Git Bash:
-./start_web_gitbash.sh
+python start_web.py
 ```
 
 **Opción D - Manual:**
@@ -135,7 +135,7 @@ python start_system.py
 **Opción C - Desde Git Bash:**
 ```bash
 # Si estás usando Git Bash:
-./start_system_gitbash.sh
+python start_system.py
 ```
 
 **Opción D - Script Bash Directo en WSL:**
@@ -207,10 +207,10 @@ start_system.bat
 ### **Scripts de Inicio (Git Bash):**
 ```bash
 # Solo interfaz web
-./start_web_gitbash.sh
+python start_web.py
 
 # Sistema ROS 2 completo en WSL
-./start_system_gitbash.sh
+python start_system.py
 ```
 
 ### **Scripts de Inicio (WSL/Linux):**
